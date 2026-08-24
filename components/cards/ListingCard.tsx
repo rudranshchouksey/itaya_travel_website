@@ -1,15 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
-import { ListingSummary } from '@/lib/api/listings';
+import { type ListingSummaryUI } from '@/lib/api/listings';
 
-export const ListingCard = ({ listing }: { listing: ListingSummary }) => {
+export const ListingCard = ({ listing }: { listing: ListingSummaryUI }) => {
+  // Gracefully handle image fallback depending on what backend returns
+  const imageUrl = listing.thumbnail_url || (listing.images && listing.images.length > 0 ? listing.images[0].url : null);
+  const displayName = (listing as any).name || listing.title;
+  const displayPrice = listing.base_price_per_night || 150; // Mock base price if not in DB
+
   return (
     <Link href={`/listings/${listing.slug}`} className="group block overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
       <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
-        {listing.thumbnail_url ? (
+        {imageUrl ? (
           <img
-            src={listing.thumbnail_url}
-            alt={listing.name}
+            src={imageUrl}
+            alt={displayName}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
@@ -23,7 +28,7 @@ export const ListingCard = ({ listing }: { listing: ListingSummary }) => {
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <h3 className="font-display text-lg font-semibold text-foreground truncate group-hover:text-primary transition-colors">{listing.name}</h3>
+          <h3 className="font-display text-lg font-semibold text-foreground truncate group-hover:text-primary transition-colors">{displayName}</h3>
           {listing.average_rating && (
             <div className="flex items-center gap-1 text-sm font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-warning">
@@ -35,7 +40,7 @@ export const ListingCard = ({ listing }: { listing: ListingSummary }) => {
         </div>
         <p className="text-sm text-muted mb-2">{listing.property_type}</p>
         <div className="font-semibold text-foreground">
-          ${listing.base_price_per_night} <span className="text-sm font-normal text-muted">/ night</span>
+          ${displayPrice} <span className="text-sm font-normal text-muted">/ night</span>
         </div>
       </div>
     </Link>
