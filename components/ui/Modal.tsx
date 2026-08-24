@@ -1,0 +1,1 @@
+export const Modal = ({children}: { children: React.ReactNode }) => <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm"><div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-surface p-6 shadow-lg sm:rounded-lg">{children}</div></div>;
