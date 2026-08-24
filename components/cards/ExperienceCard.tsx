@@ -1,14 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { ExperienceSummary } from '@/lib/api/experiences';
+import { type ExperienceSummaryUI } from '@/lib/api/experiences';
 
-export const ExperienceCard = ({ experience }: { experience: ExperienceSummary }) => {
+export const ExperienceCard = ({ experience }: { experience: ExperienceSummaryUI }) => {
+  const imageUrl = experience.thumbnail_url || (experience.images && experience.images.length > 0 ? experience.images[0].url : null);
+  
   return (
     <Link href={`/experiences/${experience.slug}`} className="group flex flex-col sm:flex-row overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
       <div className="sm:w-1/3 aspect-[4/3] sm:aspect-auto sm:h-full overflow-hidden bg-muted relative shrink-0">
-        {experience.thumbnail_url ? (
+        {imageUrl ? (
           <img
-            src={experience.thumbnail_url}
+            src={imageUrl}
             alt={experience.title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -29,7 +31,6 @@ export const ExperienceCard = ({ experience }: { experience: ExperienceSummary }
               </div>
             )}
           </div>
-          <p className="text-sm text-muted mb-4 line-clamp-2">{experience.description}</p>
         </div>
         <div className="flex items-center justify-between mt-auto">
           <div className="text-sm text-muted">
