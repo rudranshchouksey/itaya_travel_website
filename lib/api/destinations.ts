@@ -5,9 +5,20 @@ export interface DestinationSummary {
   name: string;
   slug: string;
   country: string;
-  description: string | null;
+  state_province_region: string | null;
+  city: string | null;
+  short_description: string | null;
   hero_image_url: string | null;
-  featured: boolean;
+  is_active: boolean;
+}
+
+export interface DestinationRead extends DestinationSummary {
+  description: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  timezone: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export async function getDestinations(params?: { skip?: number; limit?: number; search?: string; country?: string }) {
@@ -19,4 +30,8 @@ export async function getDestinations(params?: { skip?: number; limit?: number; 
 
   const qs = query.toString();
   return apiClient<DestinationSummary[]>(`/destinations${qs ? '?' + qs : ''}`);
+}
+
+export async function getDestinationBySlug(slug: string) {
+  return apiClient<DestinationRead>(`/destinations/${slug}`);
 }
