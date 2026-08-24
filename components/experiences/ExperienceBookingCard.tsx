@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useTripStore } from '@/lib/stores/TripContext';
+import { useRouter } from 'next/navigation';
 
 interface ExperienceBookingCardProps {
   experienceId: string;
@@ -12,6 +14,8 @@ export function ExperienceBookingCard({ experienceId, basePrice }: ExperienceBoo
   const [date, setDate] = useState<string>('');
   const [time, setTime] = useState<string>('09:00');
   const [guests, setGuests] = useState<number>(1);
+  const { addItem } = useTripStore();
+  const router = useRouter();
 
   const serviceFee = Math.round(basePrice * guests * 0.10);
   const total = (basePrice * guests) + serviceFee;
@@ -63,7 +67,24 @@ export function ExperienceBookingCard({ experienceId, basePrice }: ExperienceBoo
         </div>
       </div>
 
-      <Button className="w-full mb-4">Book Experience</Button>
+      <Button className="w-full mb-2">Book Experience</Button>
+      <Button 
+        variant="outline" 
+        className="w-full mb-4 bg-muted/50" 
+        onClick={() => {
+          addItem({
+            item_type: 'EXPERIENCE',
+            title: `Experience ${experienceId.substring(0,8)}...`, // Mock title
+            estimated_cost: total || basePrice,
+            day_index: 0,
+            experience_id: experienceId,
+            notes: date ? `Scheduled for ${date} at ${time}` : 'Flexible date'
+          });
+          router.push('/trips/local');
+        }}
+      >
+        Add to Trip
+      </Button>
       <p className="text-center text-sm text-muted mb-6">You won't be charged yet</p>
 
       {date && (

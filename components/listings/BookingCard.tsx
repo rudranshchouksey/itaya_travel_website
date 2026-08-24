@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useTripStore } from '@/lib/stores/TripContext';
+import { useRouter } from 'next/navigation';
 
 interface BookingCardProps {
   listingId: string;
@@ -12,6 +14,8 @@ export function BookingCard({ listingId, basePrice }: BookingCardProps) {
   const [checkIn, setCheckIn] = useState<string>('');
   const [checkOut, setCheckOut] = useState<string>('');
   const [guests, setGuests] = useState<number>(1);
+  const { addItem } = useTripStore();
+  const router = useRouter();
   const [nights, setNights] = useState<number>(0);
 
   // Calculate nights when dates change
@@ -75,7 +79,24 @@ export function BookingCard({ listingId, basePrice }: BookingCardProps) {
         </div>
       </div>
 
-      <Button className="w-full mb-4">Reserve</Button>
+      <Button className="w-full mb-2">Book Now</Button>
+      <Button 
+        variant="outline" 
+        className="w-full mb-4 bg-muted/50" 
+        onClick={() => {
+          addItem({
+            item_type: 'STAY',
+            title: `Accommodation at ${listingId.substring(0,8)}...`, // Mock title
+            estimated_cost: total || basePrice,
+            day_index: 0,
+            listing_id: listingId,
+            notes: checkIn && checkOut ? `${checkIn} to ${checkOut}` : 'Dates to be decided'
+          });
+          router.push('/trips/local');
+        }}
+      >
+        Add to Trip
+      </Button>
       <p className="text-center text-sm text-muted mb-6">You won't be charged yet</p>
 
       {nights > 0 && (
