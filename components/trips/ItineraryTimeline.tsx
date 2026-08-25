@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useTripStore, LocalTripItem } from '@/lib/stores/TripContext';
-import { Button } from '@/components/ui/Button';
 
 export function ItineraryTimeline() {
   const { trip, removeItem, updateItemDay } = useTripStore();
-  const [editingDay, setEditingDay] = useState<string | null>(null);
 
   // Group items by day
   const itemsByDay: Record<number, LocalTripItem[]> = {};
@@ -73,7 +71,7 @@ export function ItineraryTimeline() {
                   No activities scheduled for this day yet.
                 </div>
               ) : (
-                items.map((item, idx) => (
+                items.map((item) => (
                   <div key={item.id} className="bg-surface border border-border rounded-xl p-4 shadow-sm flex flex-col md:flex-row gap-4 ml-6 hover:shadow-md transition-shadow relative group">
                     
                     {/* Item Icon based on type */}

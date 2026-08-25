@@ -14,7 +14,7 @@ import { createPayment } from '@/lib/api/payments';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_123');
 
-function PaymentForm({ clientSecret, booking, onComplete }: { clientSecret: string, booking: Booking, onComplete: () => void }) {
+function PaymentForm({ booking, onComplete }: { booking: Booking, onComplete: () => void }) {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ function PaymentForm({ clientSecret, booking, onComplete }: { clientSecret: stri
   );
 }
 
-export default function CheckoutPage({ params }: { params: { id: string } }) {
+export default function CheckoutPage() {
   const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const { getToken } = useAuth();
@@ -74,6 +74,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
   // Hydration fix
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (user) {
       setGuestDetails({
@@ -115,8 +116,8 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
       // Map frontend trip items to backend booking items
       const bookingItems = trip.items.map(item => ({
         item_type: item.item_type === 'FLIGHT' || item.item_type === 'CUSTOM' ? 'CUSTOM' as const : item.item_type as 'STAY' | 'EXPERIENCE',
-        listing_id: item.item_type === 'STAY' ? '11111111-1111-1111-1111-111111111111' : undefined, // Mock UUID
-        experience_id: item.item_type === 'EXPERIENCE' ? '22222222-2222-2222-2222-222222222222' : undefined, // Mock UUID
+        listing_id: (item as any).listing_id || (item.item_type === 'STAY' ? '11111111-1111-1111-1111-111111111111' : undefined),
+        experience_id: (item as any).experience_id || (item.item_type === 'EXPERIENCE' ? '22222222-2222-2222-2222-222222222222' : undefined),
         start_date: trip.start_date || new Date().toISOString().split('T')[0],
         end_date: trip.end_date || new Date(Date.now() + 86400000).toISOString().split('T')[0],
         start_time: '14:00:00',
@@ -286,7 +287,6 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
               <div>
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
                   <PaymentForm 
-                    clientSecret={clientSecret} 
                     booking={booking} 
                     onComplete={() => router.push(`/checkout/confirm?booking_id=${booking.id}`)}
                   />

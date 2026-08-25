@@ -54,6 +54,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('itvaya_draft_trip');
     if (saved) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTrip(JSON.parse(saved));
       } catch (e) {
         console.error("Failed to parse saved trip", e);

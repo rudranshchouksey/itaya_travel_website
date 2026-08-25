@@ -63,7 +63,7 @@ export default async function BookingsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-surface rounded-2xl border border-border">
-              <p className="text-muted text-lg">You don't have any bookings yet.</p>
+              <p className="text-muted text-lg">You don&apos;t have any bookings yet.</p>
               <Link href="/" className="inline-block mt-4 bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors">
                 Explore Stays & Experiences
               </Link>

@@ -57,6 +57,7 @@ export default function AIPlannerPage() {
     start.setDate(start.getDate() + 14); // 2 weeks from now
     const end = new Date(start);
     end.setDate(end.getDate() + 5); // 5 days trip
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStartDate(start.toISOString().split('T')[0]);
     setEndDate(end.toISOString().split('T')[0]);
   }, []);
@@ -174,7 +175,7 @@ export default function AIPlannerPage() {
               </div>
               <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">Plan with AI</h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                Tell us what you're looking for, and our AI will curate a personalized itinerary using real, bookable experiences and stays.
+                Tell us what you&apos;re looking for, and our AI will curate a personalized itinerary using real, bookable experiences and stays.
               </p>
             </div>
 

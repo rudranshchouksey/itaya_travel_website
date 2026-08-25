@@ -5,6 +5,22 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { getListingBySlug } from '@/lib/api/listings';
 import { ImageGallery } from '@/components/listings/ImageGallery';
 import { BookingCard } from '@/components/listings/BookingCard';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  try {
+    const listing = await getListingBySlug(params.slug);
+    const displayName = (listing as {name?: string, title: string}).name || listing.title;
+    return {
+      title: displayName,
+      description: listing.description || listing.property_type || `Stay at ${displayName}`,
+    };
+  } catch {
+    return {
+      title: 'Listing Not Found',
+    };
+  }
+}
 
 export default async function ListingDetailPage({ params }: { params: { slug: string } }) {
   let listing;
@@ -15,7 +31,7 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
   }
 
   // Gracefully fallback name/base_price if backend doesn't explicitly return them yet.
-  const displayName = (listing as any).name || listing.title;
+  const displayName = (listing as {name?: string, title: string}).name || listing.title;
   const displayPrice = listing.base_price_per_night || 150;
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { type ExperienceSummaryUI } from '@/lib/api/experiences';
 
 export const ExperienceCard = ({ experience }: { experience: ExperienceSummaryUI }) => {
@@ -9,10 +10,11 @@ export const ExperienceCard = ({ experience }: { experience: ExperienceSummaryUI
     <Link href={`/experiences/${experience.slug}`} className="group flex flex-col sm:flex-row overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
       <div className="sm:w-1/3 aspect-[4/3] sm:aspect-auto sm:h-full overflow-hidden bg-muted relative shrink-0">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={experience.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-muted text-muted">No Image</div>

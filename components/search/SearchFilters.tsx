@@ -17,11 +17,11 @@ export const SearchFilters = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setType(searchParams.get('type') || 'all');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setMinPrice(searchParams.get('min_price') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setMaxPrice(searchParams.get('max_price') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setSortBy(searchParams.get('sort_by') || 'relevance');
   }, [searchParams]);
 

@@ -7,7 +7,7 @@ import { ItineraryTimeline } from '@/components/trips/ItineraryTimeline';
 import { BudgetSummary } from '@/components/trips/BudgetSummary';
 import { useTripStore } from '@/lib/stores/TripContext';
 
-export default function TripBuilderPage({ params }: { params: { id: string } }) {
+export default function TripBuilderPage() {
   const { trip, updateTitle } = useTripStore();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState(trip.title);
@@ -15,6 +15,7 @@ export default function TripBuilderPage({ params }: { params: { id: string } }) 
   // Prevent hydration mismatch
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     setTempTitle(trip.title);
   }, [trip.title]);

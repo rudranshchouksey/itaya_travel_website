@@ -43,7 +43,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
           </div>
           
           {/* Supporting Images */}
-          {supportingImages.map((img, idx) => (
+          {supportingImages.map((img) => (
             <div key={img.id} className="col-span-1 row-span-1 relative cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setShowAll(true)}>
               <Image fill src={img.url} alt="Listing view" className="object-cover" />
             </div>

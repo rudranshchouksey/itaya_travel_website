@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useTripStore } from '@/lib/stores/TripContext';
 import { useRouter } from 'next/navigation';
@@ -16,20 +16,15 @@ export function BookingCard({ listingId, basePrice }: BookingCardProps) {
   const [guests, setGuests] = useState<number>(1);
   const { addItem } = useTripStore();
   const router = useRouter();
-  const [nights, setNights] = useState<number>(0);
 
-  // Calculate nights when dates change
-  useEffect(() => {
-    if (checkIn && checkOut) {
-      const start = new Date(checkIn);
-      const end = new Date(checkOut);
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      setNights(diffDays > 0 ? diffDays : 0);
-    } else {
-      setNights(0);
-    }
-  }, [checkIn, checkOut]);
+  let nights = 0;
+  if (checkIn && checkOut) {
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    nights = diffDays > 0 ? diffDays : 0;
+  }
 
   const cleaningFee = 50;
   const serviceFee = Math.round(basePrice * nights * 0.12);
@@ -97,7 +92,7 @@ export function BookingCard({ listingId, basePrice }: BookingCardProps) {
       >
         Add to Trip
       </Button>
-      <p className="text-center text-sm text-muted mb-6">You won't be charged yet</p>
+      <p className="text-center text-sm text-muted mb-6">You won&apos;t be charged yet</p>
 
       {nights > 0 && (
         <div className="space-y-4 text-sm">

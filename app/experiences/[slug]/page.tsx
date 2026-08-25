@@ -5,6 +5,21 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { getExperienceBySlug } from '@/lib/api/experiences';
 import { ExperienceGallery } from '@/components/experiences/ExperienceGallery';
 import { ExperienceBookingCard } from '@/components/experiences/ExperienceBookingCard';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  try {
+    const experience = await getExperienceBySlug(params.slug);
+    return {
+      title: experience.title,
+      description: experience.description || `Experience ${experience.title}`,
+    };
+  } catch {
+    return {
+      title: 'Experience Not Found',
+    };
+  }
+}
 
 export default async function ExperienceDetailPage({ params }: { params: { slug: string } }) {
   let experience;
@@ -86,7 +101,7 @@ export default async function ExperienceDetailPage({ params }: { params: { slug:
             </div>
             
             <div className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">What's included</h2>
+              <h2 className="text-2xl font-semibold mb-4">What&apos;s included</h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <li className="flex items-center gap-3 text-muted-foreground">
                   <svg xmlns="http://www.w3.org/2000/svg" className="text-primary w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>

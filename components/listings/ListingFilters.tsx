@@ -19,13 +19,13 @@ export function ListingFilters() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMinPrice(searchParams.get('min_price') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setMaxPrice(searchParams.get('max_price') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setGuests(searchParams.get('guest_capacity') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setPropertyType(searchParams.get('property_type') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setSortBy(searchParams.get('sort_by') || 'recommended');
   }, [searchParams]);
 

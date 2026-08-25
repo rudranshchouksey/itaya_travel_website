@@ -85,7 +85,7 @@ export function ExperienceBookingCard({ experienceId, basePrice }: ExperienceBoo
       >
         Add to Trip
       </Button>
-      <p className="text-center text-sm text-muted mb-6">You won't be charged yet</p>
+      <p className="text-center text-sm text-muted mb-6">You won&apos;t be charged yet</p>
 
       {date && (
         <div className="space-y-4 text-sm">

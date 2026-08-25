@@ -18,11 +18,11 @@ export function ExperienceFilters() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMaxPrice(searchParams.get('max_price') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setCategory(searchParams.get('category_id') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setDuration(searchParams.get('duration') || '');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setRating(searchParams.get('rating') || '');
   }, [searchParams]);
 

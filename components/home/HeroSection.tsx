@@ -1,14 +1,17 @@
 import React from 'react';
+import Image from 'next/image';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { Button } from '@/components/ui/Button';
 
 export const HeroSection = () => {
   return (
     <section className="relative h-[600px] w-full flex items-center justify-center overflow-hidden bg-muted">
-      <img
+      <Image
         src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
         alt="Travel Destination"
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        priority
+        className="object-cover"
       />
       <div className="absolute inset-0 bg-black/40" />
       
@@ -22,23 +25,24 @@ export const HeroSection = () => {
         
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-2 rounded-2xl bg-surface/95 p-4 shadow-xl backdrop-blur-sm md:flex-row md:items-center md:gap-4 md:rounded-full md:p-3">
           <div className="flex-1 border-b border-border pb-2 md:border-b-0 md:border-r md:pb-0 md:pr-4">
-            <label className="block pl-3 text-left text-xs font-bold text-foreground">Where</label>
+            <label htmlFor="search-where" className="block pl-3 text-left text-xs font-bold text-foreground">Where</label>
             <SearchInput
+              id="search-where"
               placeholder="Search destinations"
               className="border-none bg-transparent shadow-none focus:ring-0 pl-10 pt-1"
             />
           </div>
           <div className="flex-1 border-b border-border pb-2 md:border-b-0 md:border-r md:pb-0 md:pr-4">
-            <label className="block pl-3 text-left text-xs font-bold text-foreground">Dates</label>
-            <input type="text" placeholder="Add dates" className="w-full bg-transparent pl-3 pt-1 text-sm outline-none placeholder:text-muted" />
+            <label htmlFor="search-dates" className="block pl-3 text-left text-xs font-bold text-foreground">Dates</label>
+            <input id="search-dates" type="text" placeholder="Add dates" className="w-full bg-transparent pl-3 pt-1 text-sm outline-none placeholder:text-muted" />
           </div>
           <div className="flex-1 pb-2 md:pb-0 md:pr-2">
-            <label className="block pl-3 text-left text-xs font-bold text-foreground">Travelers</label>
-            <input type="text" placeholder="Add guests" className="w-full bg-transparent pl-3 pt-1 text-sm outline-none placeholder:text-muted" />
+            <label htmlFor="search-travelers" className="block pl-3 text-left text-xs font-bold text-foreground">Travelers</label>
+            <input id="search-travelers" type="text" placeholder="Add guests" className="w-full bg-transparent pl-3 pt-1 text-sm outline-none placeholder:text-muted" />
           </div>
           <div className="pt-2 md:pt-0">
-            <Button size="lg" className="w-full rounded-xl md:w-auto md:rounded-full bg-primary hover:bg-primary/90 shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="mr-2 h-5 w-5">
+            <Button size="lg" aria-label="Search" className="w-full rounded-xl md:w-auto md:rounded-full bg-primary hover:bg-primary/90 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="mr-2 h-5 w-5" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
               Search

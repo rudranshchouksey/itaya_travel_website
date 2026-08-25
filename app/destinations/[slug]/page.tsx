@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getDestinationBySlug } from '@/lib/api/destinations';
 import { getListings, type ListingSummary } from '@/lib/api/listings';
@@ -10,6 +11,21 @@ import { ListingCard } from '@/components/cards/ListingCard';
 import { ExperienceCard } from '@/components/cards/ExperienceCard';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  try {
+    const destination = await getDestinationBySlug(params.slug);
+    return {
+      title: destination.name,
+      description: destination.short_description || `Discover ${destination.name}`,
+    };
+  } catch {
+    return {
+      title: 'Destination Not Found',
+    };
+  }
+}
 
 export default async function DestinationPage({ params }: { params: { slug: string } }) {
   let destination;
@@ -44,10 +60,12 @@ export default async function DestinationPage({ params }: { params: { slug: stri
         {/* Hero Banner */}
         <section className="relative h-[50vh] min-h-[400px] w-full bg-muted">
           {destination.hero_image_url ? (
-            <img 
+            <Image 
               src={destination.hero_image_url} 
               alt={destination.name}
-              className="absolute inset-0 h-full w-full object-cover"
+              fill
+              priority
+              className="object-cover"
             />
           ) : (
             <div className="absolute inset-0 bg-muted"></div>

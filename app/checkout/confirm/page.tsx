@@ -9,6 +9,19 @@ import { Button } from '@/components/ui/Button';
 import { getBooking, Booking } from '@/lib/api/bookings';
 import Link from 'next/link';
 
+interface BookingItem {
+  item_type: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+interface BookingGuest {
+  first_name: string;
+  last_name: string;
+  is_primary: boolean;
+  email?: string;
+}
+
 function ConfirmationContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('booking_id');
@@ -21,6 +34,7 @@ function ConfirmationContent() {
     if (!isLoaded) return;
     
     if (!isSignedIn) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError("Please log in to view booking details.");
       setLoading(false);
       return;
@@ -113,7 +127,7 @@ function ConfirmationContent() {
               <div>
                 <h3 className="font-bold text-lg mb-4">Itinerary Summary</h3>
                 <div className="space-y-3">
-                  {booking.items?.map((item: any, idx: number) => (
+                  {(booking.items as BookingItem[])?.map((item: BookingItem, idx: number) => (
                     <div key={idx} className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-medium">{item.item_type} Booking</div>
@@ -131,7 +145,7 @@ function ConfirmationContent() {
               <div>
                 <h3 className="font-bold text-lg mb-4">Traveler Information</h3>
                 <div className="space-y-2">
-                  {booking.guests?.map((guest: any, idx: number) => (
+                  {(booking.guests as BookingGuest[])?.map((guest: BookingGuest, idx: number) => (
                     <div key={idx} className="text-sm">
                       <span className="font-medium">{guest.first_name} {guest.last_name}</span> 
                       {guest.is_primary && <span className="ml-2 text-xs bg-muted px-2 py-0.5 rounded-full">Primary</span>}
