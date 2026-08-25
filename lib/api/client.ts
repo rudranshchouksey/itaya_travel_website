@@ -2,14 +2,18 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://loca
 
 export async function apiClient<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit & { token?: string | null } = {}
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const headers = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
+
+  if (options.token) {
+    headers['Authorization'] = `Bearer ${options.token}`;
+  }
 
   const response = await fetch(url, {
     ...options,
