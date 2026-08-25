@@ -4,10 +4,12 @@ import React from 'react';
 import { useTripStore } from '@/lib/stores/TripContext';
 import { Button } from '@/components/ui/Button';
 import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 export function BudgetSummary() {
   const { trip } = useTripStore();
   const { isSignedIn } = useUser();
+  const router = useRouter();
 
   const accommodationCost = trip.items
     .filter(i => i.item_type === 'STAY')
@@ -31,14 +33,19 @@ export function BudgetSummary() {
   const fees = Math.round(total * 0.1); 
   const grandTotal = total + fees;
 
-  const handleSave = () => {
+  const handleCheckout = () => {
     if (!isSignedIn) {
-      alert("You need to log in to save this trip permanently!");
-      // In a real app, this would trigger the Clerk Auth modal
-    } else {
-      alert("Trip saved successfully to the backend!");
-      // In a real app, this would POST to /trips
+      alert("You need to log in to book this trip!");
+      return;
     }
+    
+    if (trip.items.length === 0) {
+      alert("Please add items to your trip before booking.");
+      return;
+    }
+
+    // Redirect to checkout
+    router.push(`/checkout/${trip.id}`);
   };
 
   return (
@@ -77,11 +84,11 @@ export function BudgetSummary() {
         </div>
       </div>
 
-      <Button className="w-full mb-3" onClick={handleSave}>
-        {isSignedIn ? 'Save Itinerary' : 'Log in to save'}
+      <Button className="w-full mb-3" onClick={handleCheckout} disabled={trip.items.length === 0}>
+        {isSignedIn ? 'Proceed to Checkout' : 'Log in to book'}
       </Button>
       <p className="text-xs text-center text-muted-foreground">
-        Prices are estimates and do not guarantee final booking amounts.
+        Prices are estimates. Final price determined at checkout.
       </p>
     </div>
   );
