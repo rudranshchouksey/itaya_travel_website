@@ -7,13 +7,14 @@ import { ExperienceCard } from '@/components/cards/ExperienceCard';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
-export default async function ExperiencesPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function ExperiencesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   
   // Parse params
-  const destination_id = typeof searchParams.destination_id === 'string' ? searchParams.destination_id : undefined;
-  const category_id = typeof searchParams.category_id === 'string' ? searchParams.category_id : undefined;
-  const max_price = typeof searchParams.max_price === 'string' ? parseFloat(searchParams.max_price) : undefined;
-  const skip = typeof searchParams.skip === 'string' ? parseInt(searchParams.skip, 10) : 0;
+  const resolvedSearchParams = await searchParams;
+  const destination_id = typeof resolvedSearchParams.destination_id === 'string' ? resolvedSearchParams.destination_id : undefined;
+  const category_id = typeof resolvedSearchParams.category_id === 'string' ? resolvedSearchParams.category_id : undefined;
+  const max_price = typeof resolvedSearchParams.max_price === 'string' ? parseFloat(resolvedSearchParams.max_price) : undefined;
+  const skip = typeof resolvedSearchParams.skip === 'string' ? parseInt(resolvedSearchParams.skip, 10) : 0;
   const limit = 20;
 
   let experiences: ExperienceSummaryUI[] = [];

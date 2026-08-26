@@ -13,9 +13,10 @@ import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
   try {
-    const destination = await getDestinationBySlug(params.slug);
+    const destination = await getDestinationBySlug(resolvedParams.slug);
     return {
       title: destination.name,
       description: destination.short_description || `Discover ${destination.name}`,
@@ -27,11 +28,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function DestinationPage({ params }: { params: { slug: string } }) {
+export default async function DestinationPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
   let destination;
   
   try {
-    destination = await getDestinationBySlug(params.slug);
+    destination = await getDestinationBySlug(resolvedParams.slug);
   } catch {
     // If not found, return 404
     notFound();

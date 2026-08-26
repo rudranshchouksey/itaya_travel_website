@@ -7,8 +7,9 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/Button';
 
 // Next.js searchParams are available as a prop in page components
-export default async function DestinationsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1;
+export default async function DestinationsPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const resolvedSearchParams = await searchParams;
+  const page = typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page, 10) : 1;
   const limit = 12;
   const skip = (page - 1) * limit;
 
