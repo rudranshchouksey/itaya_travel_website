@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   },
   description: "Discover, plan, and book your next premium travel experience with Itvaya.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: 'website',
     title: "Itvaya | Premium Travel Booking",
@@ -39,6 +42,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Itvaya",
+    "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/favicon.ico`,
+    "description": "Discover, plan, and book your next premium travel experience with Itvaya."
+  };
+
   return (
     <ClerkProvider>
       <html
@@ -46,6 +58,10 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
           <TripProvider>
             {children}
           </TripProvider>

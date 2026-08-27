@@ -11,9 +11,30 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   try {
     const listing = await getListingBySlug(params.slug);
     const displayName = (listing as {name?: string, title: string}).name || listing.title;
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const url = `${baseUrl}/listings/${listing.slug}`;
+    const description = listing.description || listing.property_type || `Stay at ${displayName}`;
+    const primaryImage = listing.images?.find(img => img.is_primary)?.url || listing.images?.[0]?.url;
+
     return {
-      title: displayName,
-      description: listing.description || listing.property_type || `Stay at ${displayName}`,
+      title: `${displayName} | Itvaya`,
+      description,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: `${displayName} | Itvaya`,
+        description,
+        url,
+        type: 'website',
+        images: primaryImage ? [{ url: primaryImage, alt: displayName }] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${displayName} | Itvaya`,
+        description,
+        images: primaryImage ? [primaryImage] : [],
+      }
     };
   } catch {
     return {
@@ -34,8 +55,68 @@ export default async function ListingDetailPage({ params }: { params: { slug: st
   const displayName = (listing as {name?: string, title: string}).name || listing.title;
   const displayPrice = listing.base_price_per_night || 150;
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const url = `${baseUrl}/listings/${listing.slug}`;
+  const primaryImage = listing.images?.find(img => img.is_primary)?.url || listing.images?.[0]?.url;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": displayName,
+    "description": listing.description || undefined,
+    "url": url,
+    "image": primaryImage,
+    "address": listing.address ? {
+      "@type": "PostalAddress",
+      "streetAddress": listing.address
+    } : undefined,
+    "geo": (listing.latitude && listing.longitude) ? {
+      "@type": "GeoCoordinates",
+      "latitude": listing.latitude,
+      "longitude": listing.longitude
+    } : undefined,
+    "aggregateRating": listing.average_rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": listing.average_rating,
+      "reviewCount": listing.total_reviews
+    } : undefined
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Listings",
+        "item": `${baseUrl}/search?type=listing`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": displayName,
+        "item": url
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
       
       <PageContainer className="pt-6">

@@ -8,6 +8,11 @@ import { getDestinations, type DestinationSummary } from '@/lib/api/destinations
 import { getListings, type ListingSummary } from '@/lib/api/listings';
 import { getExperiences, type ExperienceSummary } from '@/lib/api/experiences';
 
+export const metadata = {
+  title: "Itvaya | Discover, Plan & Book Your Journey",
+  description: "Discover, plan, and book your next premium travel experience with Itvaya.",
+};
+
 export default async function HomePage() {
   // Fetch data in parallel for optimal performance
   // In a real application, you might add Suspense boundaries or Error boundaries
@@ -32,8 +37,27 @@ export default async function HomePage() {
     console.error("Error fetching homepage data:", error);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Itvaya",
+    "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/search?query={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="flex-1">
         <HeroSection />

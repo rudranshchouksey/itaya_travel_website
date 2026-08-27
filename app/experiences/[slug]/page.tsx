@@ -10,9 +10,30 @@ import { Metadata } from 'next';
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
     const experience = await getExperienceBySlug(params.slug);
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const url = `${baseUrl}/experiences/${experience.slug}`;
+    const description = experience.description || `Experience ${experience.title}`;
+    const primaryImage = experience.images?.find(img => img.is_primary)?.url || experience.images?.[0]?.url;
+
     return {
-      title: experience.title,
-      description: experience.description || `Experience ${experience.title}`,
+      title: `${experience.title} | Itvaya`,
+      description,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: `${experience.title} | Itvaya`,
+        description,
+        url,
+        type: 'website',
+        images: primaryImage ? [{ url: primaryImage, alt: experience.title }] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${experience.title} | Itvaya`,
+        description,
+        images: primaryImage ? [primaryImage] : [],
+      }
     };
   } catch {
     return {
@@ -29,8 +50,65 @@ export default async function ExperienceDetailPage({ params }: { params: { slug:
     notFound();
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const url = `${baseUrl}/experiences/${experience.slug}`;
+  const primaryImage = experience.images?.find(img => img.is_primary)?.url || experience.images?.[0]?.url;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": experience.title,
+    "description": experience.description || undefined,
+    "image": primaryImage,
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": experience.currency || "USD",
+      "price": experience.base_price,
+      "availability": "https://schema.org/InStock",
+      "url": url
+    },
+    "aggregateRating": experience.average_rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": experience.average_rating,
+      "reviewCount": experience.total_reviews
+    } : undefined
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Experiences",
+        "item": `${baseUrl}/search?type=experience`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": experience.title,
+        "item": url
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
       
       {/* Editorial Full-width Gallery */}

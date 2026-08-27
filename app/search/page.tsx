@@ -11,6 +11,13 @@ import { type ExperienceSummary } from '@/lib/api/experiences';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
+export const metadata = {
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
+
 export default async function SearchPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   
   const queryParams: SearchParams = {

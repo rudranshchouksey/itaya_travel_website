@@ -7,7 +7,17 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/checkout/', '/trips/local', '/bookings/'],
+      disallow: [
+        '/profile',
+        '/account',
+        '/bookings',
+        '/checkout',
+        '/payment',
+        '/trips/private',
+        '/sign-in',
+        '/sign-up',
+        '/search'
+      ],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };

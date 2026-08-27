@@ -17,9 +17,29 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const resolvedParams = await params;
   try {
     const destination = await getDestinationBySlug(resolvedParams.slug);
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const url = `${baseUrl}/destinations/${destination.slug}`;
+    const description = destination.short_description || `Discover ${destination.name}, ${destination.country}`;
+
     return {
-      title: destination.name,
-      description: destination.short_description || `Discover ${destination.name}`,
+      title: `${destination.name} | Itvaya`,
+      description,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: `${destination.name} | Itvaya`,
+        description,
+        url,
+        type: 'website',
+        images: destination.hero_image_url ? [{ url: destination.hero_image_url, alt: destination.name }] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${destination.name} | Itvaya`,
+        description,
+        images: destination.hero_image_url ? [destination.hero_image_url] : [],
+      }
     };
   } catch {
     return {
@@ -55,8 +75,57 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
     console.error("Error fetching destination related data:", error);
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const url = `${baseUrl}/destinations/${destination.slug}`;
+  
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "name": destination.name,
+    "description": destination.description || destination.short_description || `Discover ${destination.name}`,
+    "url": url,
+    "image": destination.hero_image_url || undefined,
+    "containedInPlace": {
+      "@type": "Country",
+      "name": destination.country
+    }
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Destinations",
+        "item": `${baseUrl}/destinations`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": destination.name,
+        "item": url
+      }
+    ]
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
       <main>
         {/* Hero Banner */}
