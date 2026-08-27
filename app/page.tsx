@@ -7,11 +7,14 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { getDestinations, type DestinationSummary } from '@/lib/api/destinations';
 import { getListings, type ListingSummary } from '@/lib/api/listings';
 import { getExperiences, type ExperienceSummary } from '@/lib/api/experiences';
+import { generateStandardMetadata } from '@/lib/seo/utils';
+import { WebSiteSchema } from '@/components/seo/WebSiteSchema';
 
-export const metadata = {
+export const metadata = generateStandardMetadata({
   title: "Itvaya | Discover, Plan & Book Your Journey",
   description: "Discover, plan, and book your next premium travel experience with Itvaya.",
-};
+  path: '/',
+});
 
 export default async function HomePage() {
   // Fetch data in parallel for optimal performance
@@ -37,27 +40,9 @@ export default async function HomePage() {
     console.error("Error fetching homepage data:", error);
   }
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Itvaya",
-    "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/search?query={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <WebSiteSchema />
       <Header />
       <main className="flex-1">
         <HeroSection />

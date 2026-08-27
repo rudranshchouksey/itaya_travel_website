@@ -20,13 +20,15 @@ Prior to optimization, the Itvaya application had basic metadata defined in `app
 ## Issues Fixed
 - **Environment**: Added `NEXT_PUBLIC_SITE_URL` to `.env.example` to ensure robust absolute URLs.
 - **Global Metadata**: Added canonical alternate to the root layout and enhanced default Open Graph / Twitter defaults.
-- **Organization & WebSite Schema**: Implemented `Organization` schema globally in `app/layout.tsx` and `WebSite` schema with a `SearchAction` in `app/page.tsx`.
+- **Organization & WebSite Schema**: Implemented `Organization` schema globally in `app/layout.tsx` and `WebSite` schema with a `SearchAction` in `app/page.tsx` using typed `OrganizationSchema` and `WebSiteSchema` components.
 - **Search Page Strategy**: Added explicit `metadata = { robots: { index: false, follow: true } }` to `app/search/page.tsx` to stop arbitrary filter permutation indexing.
 - **Dynamic SEO on Destinations**: Injected canonical URL, dynamic OG image (from `hero_image_url`), Twitter card, `TouristDestination` schema, and `BreadcrumbList`.
 - **Dynamic SEO on Listings**: Injected canonical URL, dynamic OG image, `LodgingBusiness` schema with address and rating data, and `BreadcrumbList`.
 - **Dynamic SEO on Experiences**: Injected canonical URL, dynamic OG image, `Product` schema with offers and ratings, and `BreadcrumbList`.
 - **Dynamic Sitemap**: Overhauled `app/sitemap.ts` to actively fetch up to 1,000 destinations, listings, and experiences in parallel using the existing API client.
 - **Robots.txt Rules**: Updated `app/robots.ts` to explicitly disallow crawling of `/profile`, `/account`, `/bookings`, `/checkout`, `/payment`, `/trips/private`, `/sign-in`, `/sign-up`, and `/search`.
+- **Component Refactoring (Phase 2)**: All JSON-LD `<script>` injections were extracted into strongly typed React components in `components/seo/*`.
+- **Travel Guides Scaffold (Phase 2)**: Added the `app/travel-guides/*` folder structure, ready for dynamic editorial content and `ArticleSchema` generation, gracefully handling 404s until the backend is ready.
 
 ## Indexable Routes
 - `/` (Homepage)
@@ -67,15 +69,14 @@ Prior to optimization, the Itvaya application had basic metadata defined in `app
 - Dynamically references the absolute URL of the sitemap.
 
 ## Structured Data
-- All implemented natively using `dangerouslySetInnerHTML` inside standard `<script type="application/ld+json">` tags, directly inside server components for instant crawling.
+- All structured data instances were encapsulated into typed React components (`TouristDestinationSchema`, `LodgingSchema`, `ExperienceSchema`, etc.) making them deeply integrated into the Next.js component tree for robust SSR (Server Side Rendering).
 
-## Image SEO
-- We mapped the backend's primary/hero images natively into Open Graph schemas.
-- Existing frontend code relies heavily on `next/image` ensuring optimal lazy-loading and formatting.
+## Internal Linking & Breadcrumbs
+- Reusable visual `<Breadcrumbs />` were added natively to the UI of destinations, listings, and experiences, ensuring users (and crawlers without JS) can trace the site hierarchy flawlessly. These visuals natively sync with the injected JSON-LD `BreadcrumbList`.
 
-## Performance Improvements
-- SEO data is fetched alongside existing UI data in Server Components, preventing layout shifts and client-side delays.
-- `Promise.allSettled` is used in the sitemap to ensure partial availability (e.g. if the experience API is down, listings will still map).
+## Programmatic SEO & Travel Content Architecture
+- The Next.js routing architecture now supports `/travel-guides` natively. Because no fake content was fabricated, it currently serves appropriate empty states or 404s, but is fully wired to consume `ArticleSchema` and `generateMetadata()` as soon as the backend exposes an endpoint.
+- Future programmatic landing pages (e.g. `/stays/[destination_slug]`) are now documented as part of the architecture roadmap and can consume the encapsulated `components/seo` schemas natively.
 
 ## Accessibility Improvements
 - Maintained all existing accessibility. The added Breadcrumbs Schema inherently gives screen readers (if implemented in UI) and search engines better context on location hierarchy.

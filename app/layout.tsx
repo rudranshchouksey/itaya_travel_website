@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TripProvider } from "@/lib/stores/TripContext";
+import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,15 +43,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Itvaya",
-    "url": process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/favicon.ico`,
-    "description": "Discover, plan, and book your next premium travel experience with Itvaya."
-  };
-
   return (
     <ClerkProvider>
       <html
@@ -58,10 +50,7 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
+          <OrganizationSchema />
           <TripProvider>
             {children}
           </TripProvider>
